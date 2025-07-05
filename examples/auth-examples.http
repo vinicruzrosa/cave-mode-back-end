@@ -1,0 +1,186 @@
+### 🏔️ Cave Mode API - Exemplos de Uso
+
+# ========================================
+# CONFIGURAÇÃO BASE
+# ========================================
+@baseUrl = http://localhost:3000
+@contentType = application/json
+
+# ========================================
+# ENDPOINTS DE AUTENTICAÇÃO
+# ========================================
+
+### 1. Registrar novo usuário
+POST {{baseUrl}}/api/auth/register
+Content-Type: {{contentType}}
+
+{
+  "email": "usuario@exemplo.com",
+  "password": "minhasenha123"
+}
+
+### 2. Fazer login
+POST {{baseUrl}}/api/auth/login
+Content-Type: {{contentType}}
+
+{
+  "email": "usuario@exemplo.com",
+  "password": "minhasenha123"
+}
+
+### 3. Tentar login com credenciais inválidas
+POST {{baseUrl}}/api/auth/login
+Content-Type: {{contentType}}
+
+{
+  "email": "usuario@exemplo.com",
+  "password": "senhaerrada"
+}
+
+### 4. Registrar usuário com email inválido
+POST {{baseUrl}}/api/auth/register
+Content-Type: {{contentType}}
+
+{
+  "email": "email-invalido",
+  "password": "minhasenha123"
+}
+
+### 5. Registrar usuário com senha muito curta
+POST {{baseUrl}}/api/auth/register
+Content-Type: {{contentType}}
+
+{
+  "email": "usuario2@exemplo.com",
+  "password": "123"
+}
+
+# ========================================
+# ENDPOINTS PROTEGIDOS
+# ========================================
+
+### 6. Obter perfil do usuário (com token válido)
+GET {{baseUrl}}/api/protected/profile
+Authorization: Bearer {{authToken}}
+
+### 7. Obter dashboard do usuário (com token válido)
+GET {{baseUrl}}/api/protected/dashboard
+Authorization: Bearer {{authToken}}
+
+### 8. Tentar acessar rota protegida sem token
+GET {{baseUrl}}/api/protected/profile
+
+### 9. Tentar acessar rota protegida com token inválido
+GET {{baseUrl}}/api/protected/profile
+Authorization: Bearer token_invalido
+
+# ========================================
+# ENDPOINTS DO SISTEMA
+# ========================================
+
+### 10. Verificar status da aplicação
+GET {{baseUrl}}/health
+
+### 11. Obter informações da API
+GET {{baseUrl}}/api/info
+
+### 12. Acessar documentação Swagger
+GET {{baseUrl}}/docs
+
+# ========================================
+# FLUXO COMPLETO DE AUTENTICAÇÃO
+# ========================================
+
+### Passo 1: Registrar usuário
+# @name register
+POST {{baseUrl}}/api/auth/register
+Content-Type: {{contentType}}
+
+{
+  "email": "teste@exemplo.com",
+  "password": "senha123456"
+}
+
+### Passo 2: Fazer login e extrair token
+# @name login
+POST {{baseUrl}}/api/auth/login
+Content-Type: {{contentType}}
+
+{
+  "email": "teste@exemplo.com",
+  "password": "senha123456"
+}
+
+### Passo 3: Usar token para acessar rota protegida
+@authToken = {{login.response.body.token}}
+GET {{baseUrl}}/api/protected/profile
+Authorization: Bearer {{authToken}}
+
+# ========================================
+# EXEMPLOS DE ERRO
+# ========================================
+
+### Erro 400: Dados inválidos
+POST {{baseUrl}}/api/auth/register
+Content-Type: {{contentType}}
+
+{
+  "email": "email-invalido",
+  "password": "123"
+}
+
+### Erro 401: Credenciais inválidas
+POST {{baseUrl}}/api/auth/login
+Content-Type: {{contentType}}
+
+{
+  "email": "usuario@exemplo.com",
+  "password": "senhaerrada"
+}
+
+### Erro 401: Token inválido
+GET {{baseUrl}}/api/protected/profile
+Authorization: Bearer token_invalido_ou_expirado
+
+# ========================================
+# TESTES DE PERFORMANCE
+# ========================================
+
+### Teste de carga: Múltiplos registros
+# @name register1
+POST {{baseUrl}}/api/auth/register
+Content-Type: {{contentType}}
+
+{
+  "email": "user1@test.com",
+  "password": "senha123"
+}
+
+### @name register2
+POST {{baseUrl}}/api/auth/register
+Content-Type: {{contentType}}
+
+{
+  "email": "user2@test.com",
+  "password": "senha123"
+}
+
+### @name register3
+POST {{baseUrl}}/api/auth/register
+Content-Type: {{contentType}}
+
+{
+  "email": "user3@test.com",
+  "password": "senha123"
+}
+
+# ========================================
+# NOTAS IMPORTANTES
+# ========================================
+
+# 1. O token JWT é válido por 24 horas
+# 2. Senhas são criptografadas antes de serem armazenadas
+# 3. Todos os endpoints retornam JSON
+# 4. Códigos de status HTTP seguem padrões REST
+# 5. Validação de dados é feita com Zod
+# 6. Documentação completa disponível em /docs 

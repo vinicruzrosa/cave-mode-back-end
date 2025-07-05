@@ -1,0 +1,214 @@
+### 🏔️ Cave Mode API - Exemplos de Alarme com Selfie
+
+# ========================================
+# CONFIGURAÇÃO BASE
+# ========================================
+@baseUrl = http://localhost:3000
+@contentType = application/json
+
+# ========================================
+# AUTENTICAÇÃO (PRIMEIRO FAÇA LOGIN)
+# ========================================
+
+### 1. Fazer login para obter token
+# @name login
+POST {{baseUrl}}/api/auth/login
+Content-Type: {{contentType}}
+
+{
+  "email": "usuario@exemplo.com",
+  "password": "minhasenha123"
+}
+
+### 2. Extrair token do login
+@authToken = {{login.response.body.token}}
+
+# ========================================
+# ENDPOINTS DE ALARME
+# ========================================
+
+### 3. Criar novo alarme
+POST {{baseUrl}}/api/alarms
+Content-Type: {{contentType}}
+Authorization: Bearer {{authToken}}
+
+{
+  "time": "2024-01-16T07:00:00.000Z",
+  "repeat": "daily"
+}
+
+### 4. Criar alarme único
+POST {{baseUrl}}/api/alarms
+Content-Type: {{contentType}}
+Authorization: Bearer {{authToken}}
+
+{
+  "time": "2024-01-16T08:30:00.000Z",
+  "repeat": "once"
+}
+
+### 5. Criar alarme semanal
+POST {{baseUrl}}/api/alarms
+Content-Type: {{contentType}}
+Authorization: Bearer {{authToken}}
+
+{
+  "time": "2024-01-16T09:00:00.000Z",
+  "repeat": "weekly"
+}
+
+### 6. Listar todos os alarmes
+GET {{baseUrl}}/api/alarms
+Authorization: Bearer {{authToken}}
+
+### 7. Listar apenas alarmes ativos
+GET {{baseUrl}}/api/alarms/active
+Authorization: Bearer {{authToken}}
+
+### 8. Atualizar alarme
+PUT {{baseUrl}}/api/alarms/1
+Content-Type: {{contentType}}
+Authorization: Bearer {{authToken}}
+
+{
+  "time": "2024-01-16T07:30:00.000Z",
+  "repeat": "daily",
+  "active": true
+}
+
+### 9. Desativar alarme
+PUT {{baseUrl}}/api/alarms/1
+Content-Type: {{contentType}}
+Authorization: Bearer {{authToken}}
+
+{
+  "active": false
+}
+
+# ========================================
+# ENDPOINTS DE SELFIE
+# ========================================
+
+### 10. Upload de selfie (com imagem válida)
+# Substitua o caminho da imagem por uma imagem real com luz natural
+POST {{baseUrl}}/api/alarms/1/selfie
+Authorization: Bearer {{authToken}}
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary
+
+------WebKitFormBoundary
+Content-Disposition: form-data; name="image"; filename="selfie.jpg"
+Content-Type: image/jpeg
+
+< ./test-images/selfie-with-light.jpg
+------WebKitFormBoundary--
+
+### 11. Upload de selfie (imagem escura - deve falhar)
+POST {{baseUrl}}/api/alarms/1/selfie
+Authorization: Bearer {{authToken}}
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary
+
+------WebKitFormBoundary
+Content-Disposition: form-data; name="image"; filename="dark-selfie.jpg"
+Content-Type: image/jpeg
+
+< ./test-images/dark-selfie.jpg
+------WebKitFormBoundary--
+
+### 12. Listar selfies de um alarme
+GET {{baseUrl}}/api/alarms/1/selfies
+Authorization: Bearer {{authToken}}
+
+# ========================================
+# OPERAÇÕES DE MANUTENÇÃO
+# ========================================
+
+### 13. Deletar alarme
+DELETE {{baseUrl}}/api/alarms/1
+Authorization: Bearer {{authToken}}
+
+# ========================================
+# EXEMPLOS DE ERRO
+# ========================================
+
+### 14. Tentar criar alarme no passado (deve falhar)
+POST {{baseUrl}}/api/alarms
+Content-Type: {{contentType}}
+Authorization: Bearer {{authToken}}
+
+{
+  "time": "2020-01-01T07:00:00.000Z",
+  "repeat": "daily"
+}
+
+### 15. Tentar acessar alarme de outro usuário (deve falhar)
+GET {{baseUrl}}/api/alarms/999
+Authorization: Bearer {{authToken}}
+
+### 16. Tentar upload sem imagem (deve falhar)
+POST {{baseUrl}}/api/alarms/1/selfie
+Authorization: Bearer {{authToken}}
+
+### 17. Tentar upload de arquivo não-imagem (deve falhar)
+POST {{baseUrl}}/api/alarms/1/selfie
+Authorization: Bearer {{authToken}}
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary
+
+------WebKitFormBoundary
+Content-Disposition: form-data; name="image"; filename="document.pdf"
+Content-Type: application/pdf
+
+< ./test-files/document.pdf
+------WebKitFormBoundary--
+
+# ========================================
+# FLUXO COMPLETO DE ALARME
+# ========================================
+
+### Passo 1: Criar alarme
+# @name createAlarm
+POST {{baseUrl}}/api/alarms
+Content-Type: {{contentType}}
+Authorization: Bearer {{authToken}}
+
+{
+  "time": "2024-01-16T07:00:00.000Z",
+  "repeat": "daily"
+}
+
+### Passo 2: Verificar alarme criado
+@alarmId = {{createAlarm.response.body.alarm.id}}
+GET {{baseUrl}}/api/alarms/{{alarmId}}
+Authorization: Bearer {{authToken}}
+
+### Passo 3: Upload de selfie para desativar
+POST {{baseUrl}}/api/alarms/{{alarmId}}/selfie
+Authorization: Bearer {{authToken}}
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary
+
+------WebKitFormBoundary
+Content-Disposition: form-data; name="image"; filename="selfie.jpg"
+Content-Type: image/jpeg
+
+< ./test-images/selfie-with-light.jpg
+------WebKitFormBoundary--
+
+### Passo 4: Verificar se alarme foi desativado
+GET {{baseUrl}}/api/alarms/{{alarmId}}
+Authorization: Bearer {{authToken}}
+
+### Passo 5: Verificar selfies do alarme
+GET {{baseUrl}}/api/alarms/{{alarmId}}/selfies
+Authorization: Bearer {{authToken}}
+
+# ========================================
+# NOTAS IMPORTANTES
+# ========================================
+
+# 1. Todos os endpoints de alarme requerem autenticação JWT
+# 2. O horário do alarme deve ser no futuro
+# 3. A verificação de luz natural usa limiares de brilho (80-250)
+# 4. Selfies aprovadas automaticamente desativam o alarme
+# 5. Imagens são salvas em uploads/selfies/
+# 6. Alarme pode ser repetido: once, daily, weekly
+# 7. Apenas o proprietário pode acessar seus alarmes
+# 8. Selfies são analisadas em tempo real com sharp 

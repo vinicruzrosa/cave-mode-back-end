@@ -18,6 +18,7 @@ model User {
   id        Int      @id @default(autoincrement())
   email     String   @unique
   password  String
+  safeMode  Boolean  @default(false)
   createdAt DateTime @default(now())
   routines  Routine[]
   alarms    Alarm[]
@@ -29,17 +30,39 @@ model Routine {
   id        Int      @id @default(autoincrement())
   user      User     @relation(fields: [userId], references: [id])
   userId    Int
-  name      String
+  title     String
   startTime DateTime
   endTime   DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Alarm {
-  id     Int      @id @default(autoincrement())
-  user   User     @relation(fields: [userId], references: [id])
-  userId Int
-  time   DateTime
-  active Boolean  @default(true)
+  id        Int           @id @default(autoincrement())
+  user      User          @relation(fields: [userId], references: [id])
+  userId    Int
+  time      DateTime
+  active    Boolean       @default(true)
+  repeat    AlarmRepeat   @default(once)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  selfies   Selfie[]
+}
+
+model Selfie {
+  id        Int      @id @default(autoincrement())
+  alarm     Alarm    @relation(fields: [alarmId], references: [id])
+  alarmId   Int
+  imagePath String
+  brightness Float
+  approved  Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+enum AlarmRepeat {
+  once
+  daily
+  weekly
 }
 
 model Goal {
@@ -48,14 +71,22 @@ model Goal {
   userId    Int
   title     String
   completed Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model BlockedApp {
   id        Int      @id @default(autoincrement())
   user      User     @relation(fields: [userId], references: [id])
   userId    Int
-  name      String
-  type      String
-  permanent Boolean  @default(false)
-  duration  Int?
+  appName   String
+  type      BlockType
+  duration  Int?     // Duration in minutes for temporary blocks
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum BlockType {
+  temporary
+  permanent
 }
