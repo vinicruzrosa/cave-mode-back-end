@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from '../../generated/prisma';
 import { generateToken } from '../../src/utils/jwt';
 
 // Mock do Prisma para testes

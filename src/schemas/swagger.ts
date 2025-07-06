@@ -412,10 +412,9 @@ export const swaggerTags = [
 
 export const swaggerSecuritySchemes = {
   bearerAuth: {
-    type: 'http',
+    type: 'http' as const,
     scheme: 'bearer',
     bearerFormat: 'JWT',
-    description: 'JWT token obtido através do endpoint de login. Use no formato: Bearer <token>',
-    example: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
+    description: 'JWT token obtido através do endpoint de login. Use no formato: Bearer <token>'
   }
 }; 

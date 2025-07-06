@@ -1,0 +1,643 @@
+{
+	"info": {
+		"_postman_id": "cave-mode-alarms-api",
+		"name": "Cave Mode - Alarmes API",
+		"description": "Coleção completa da API de alarmes do Cave Mode",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Autenticação",
+			"item": [
+				{
+					"name": "Registrar Usuário",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"teste@exemplo.com\",\n  \"password\": \"123456\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/auth/register",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"register"
+							]
+						},
+						"description": "Registra um novo usuário no sistema"
+					},
+					"response": []
+				},
+				{
+					"name": "Fazer Login",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"teste@exemplo.com\",\n  \"password\": \"123456\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/auth/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"login"
+							]
+						},
+						"description": "Faz login e retorna um token JWT"
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints de autenticação"
+		},
+		{
+			"name": "Alarmes",
+			"item": [
+				{
+					"name": "Criar Alarme",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"time\": \"2025-07-06T20:00:00.000Z\",\n  \"repeat\": \"daily\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/alarms",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"alarms"
+							]
+						},
+						"description": "Cria um novo alarme para o usuário autenticado"
+					},
+					"response": []
+				},
+				{
+					"name": "Listar Todos os Alarmes",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/alarms",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"alarms"
+							]
+						},
+						"description": "Lista todos os alarmes do usuário autenticado. O retorno inclui todos os campos do alarme, inclusive o id, time, repeat, active, createdAt e updatedAt."
+					},
+					"response": [
+						{
+							"name": "Exemplo de resposta",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{auth_token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/alarms",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"alarms"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"body": "{\n  \"alarms\": [\n    {\n      \"id\": 5,\n      \"userId\": 4,\n      \"time\": \"2025-07-06T23:00:00.000Z\",\n      \"active\": true,\n      \"repeat\": \"once\",\n      \"createdAt\": \"2025-07-06T18:46:48.684Z\",\n      \"updatedAt\": \"2025-07-06T19:00:36.293Z\"\n    },\n    {\n      \"id\": 7,\n      \"userId\": 4,\n      \"time\": \"2025-07-07T08:00:00.000Z\",\n      \"active\": true,\n      \"repeat\": \"daily\",\n      \"createdAt\": \"2025-07-06T19:05:00.000Z\",\n      \"updatedAt\": \"2025-07-06T19:05:00.000Z\"\n    },\n    {\n      \"id\": 8,\n      \"userId\": 4,\n      \"time\": \"2025-07-07T12:00:00.000Z\",\n      \"active\": true,\n      \"repeat\": \"weekly\",\n      \"createdAt\": \"2025-07-06T19:05:01.000Z\",\n      \"updatedAt\": \"2025-07-06T19:05:01.000Z\"\n    }\n  ]\n}"
+						}
+					]
+				},
+				{
+					"name": "Listar Alarmes Ativos",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/alarms/active",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"alarms",
+								"active"
+							]
+						},
+						"description": "Lista apenas os alarmes ativos do usuário autenticado"
+					},
+					"response": []
+				},
+				{
+					"name": "Atualizar Alarme",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"time\": \"2025-07-06T21:00:00.000Z\",\n  \"repeat\": \"weekly\",\n  \"active\": false\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/alarms/{{alarm_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"alarms",
+								"{{alarm_id}}"
+							]
+						},
+						"description": "Atualiza um alarme específico do usuário autenticado"
+					},
+					"response": []
+				},
+				{
+					"name": "Deletar Alarme",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/alarms/{{alarm_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"alarms",
+								"{{alarm_id}}"
+							]
+						},
+						"description": "Deleta um alarme específico do usuário autenticado"
+					},
+					"response": []
+				},
+				{
+					"name": "Upload Selfie",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "image",
+									"type": "file",
+									"src": []
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/api/alarms/{{alarm_id}}/selfie",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"alarms",
+								"{{alarm_id}}",
+								"selfie"
+							]
+						},
+						"description": "Envia uma selfie para desativar o alarme. A imagem será analisada para verificar luz natural."
+					},
+					"response": []
+				},
+				{
+					"name": "Listar Selfies do Alarme",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/alarms/{{alarm_id}}/selfies",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"alarms",
+								"{{alarm_id}}",
+								"selfies"
+							]
+						},
+						"description": "Lista todas as selfies enviadas para um alarme específico"
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints de gerenciamento de alarmes"
+		},
+		{
+			"name": "Usuários",
+			"item": [
+				{
+					"name": "Obter Perfil do Usuário",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/users/profile",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"profile"
+							]
+						},
+						"description": "Obtém o perfil do usuário autenticado"
+					},
+					"response": []
+				},
+				{
+					"name": "Atualizar Safe Mode",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"safeMode\": true\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/users/safe-mode",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"safe-mode"
+							]
+						},
+						"description": "Atualiza o modo seguro do usuário"
+					},
+					"response": []
+				},
+				{
+					"name": "Obter Status do Safe Mode",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/users/safe-mode",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"safe-mode"
+							]
+						},
+						"description": "Obtém o status atual do modo seguro do usuário"
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints de gerenciamento de usuários"
+		},
+		{
+			"name": "Rotinas",
+			"item": [
+				{
+					"name": "Criar Rotina",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"Rotina da Manhã\",\n  \"startTime\": \"2025-07-06T06:00:00.000Z\",\n  \"endTime\": \"2025-07-06T08:00:00.000Z\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/routines",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"routines"
+							]
+						},
+						"description": "Cria uma nova rotina para o usuário autenticado"
+					},
+					"response": []
+				},
+				{
+					"name": "Listar Rotinas",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/routines",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"routines"
+							]
+						},
+						"description": "Lista todas as rotinas do usuário autenticado"
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints de gerenciamento de rotinas"
+		},
+		{
+			"name": "Metas",
+			"item": [
+				{
+					"name": "Criar Meta",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"Ler 30 minutos por dia\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/goals",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"goals"
+							]
+						},
+						"description": "Cria uma nova meta para o usuário autenticado"
+					},
+					"response": []
+				},
+				{
+					"name": "Listar Metas",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/goals",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"goals"
+							]
+						},
+						"description": "Lista todas as metas do usuário autenticado"
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints de gerenciamento de metas"
+		},
+		{
+			"name": "Apps Bloqueados",
+			"item": [
+				{
+					"name": "Bloquear App",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"appName\": \"Instagram\",\n  \"type\": \"temporary\",\n  \"duration\": 60\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/blocked-apps",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"blocked-apps"
+							]
+						},
+						"description": "Bloqueia um aplicativo para o usuário autenticado"
+					},
+					"response": []
+				},
+				{
+					"name": "Listar Apps Bloqueados",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/blocked-apps",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"blocked-apps"
+							]
+						},
+						"description": "Lista todos os aplicativos bloqueados do usuário autenticado"
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints de gerenciamento de aplicativos bloqueados"
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:3000",
+			"type": "string"
+		},
+		{
+			"key": "auth_token",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "alarm_id",
+			"value": "",
+			"type": "string"
+		}
+	]
+} 

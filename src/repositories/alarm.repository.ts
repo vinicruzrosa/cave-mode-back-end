@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from '../../generated/prisma';
 import { AlarmRepeat } from '../types/alarm';
 
 // Use mock Prisma in test environment

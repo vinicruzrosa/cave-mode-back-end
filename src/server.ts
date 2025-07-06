@@ -11,6 +11,7 @@ import { blockedAppRoutes } from './routes/blockedApps';
 import { goalRoutes } from './routes/goals';
 import { userRoutes } from './routes/users';
 import { swaggerSchemas, swaggerTags, swaggerSecuritySchemes } from './schemas/swagger';
+import { errorLoggingMiddleware } from './middleware/errorLogger';
 
 // Carregar variáveis de ambiente
 dotenv.config();
@@ -21,7 +22,8 @@ const server = fastify({
 
 // Configurar Swagger
 server.register(swagger, {
-  swagger: {
+  mode: 'dynamic',
+  openapi: {
     info: {
       title: 'Cave Mode API',
       description: `
@@ -90,19 +92,14 @@ Authorization: Bearer <seu_token_jwt>
         url: 'https://opensource.org/licenses/MIT'
       }
     },
-    host: process.env.HOST || 'localhost:3000',
-    schemes: ['http', 'https'],
-    consumes: ['application/json'],
-    produces: ['application/json'],
+    servers: [
+      { url: 'http://localhost:3000', description: 'Local server' }
+    ],
     tags: swaggerTags,
-    securityDefinitions: {
-      bearerAuth: {
-        type: 'apiKey',
-        name: 'Authorization',
-        in: 'header',
-        description: 'JWT token no formato: Bearer <token>'
-      }
+    components: {
+      securitySchemes: swaggerSecuritySchemes
     },
+    security: [{ bearerAuth: [] }],
     externalDocs: {
       description: 'Documentação completa',
       url: 'https://docs.cavemode.com'
@@ -113,41 +110,12 @@ Authorization: Bearer <seu_token_jwt>
 // Registrar plugin multipart para upload de arquivos
 server.register(multipart);
 
+// Registrar middleware de logging de erros
+errorLoggingMiddleware(server);
+
 // Configurar Swagger UI
 server.register(swaggerUi, {
-  routePrefix: '/docs',
-  uiConfig: {
-    docExpansion: 'list',
-    deepLinking: true,
-    displayOperationId: false,
-    displayRequestDuration: true,
-    filter: true,
-    showExtensions: true,
-    showCommonExtensions: true,
-    tryItOutEnabled: true,
-    requestInterceptor: (request: any) => {
-      // Adicionar headers padrão se necessário
-      return request;
-    },
-    responseInterceptor: (response: any) => {
-      // Processar resposta se necessário
-      return response;
-    }
-  },
-  uiHooks: {
-    onRequest: function (request, reply, next) {
-      next();
-    },
-    preHandler: function (request, reply, next) {
-      next();
-    }
-  },
-  staticCSP: true,
-  transformStaticCSP: (header) => header,
-  transformSpecification: (swaggerObject, request, reply) => {
-    return swaggerObject;
-  },
-  transformSpecificationClone: true
+  routePrefix: '/docs'
 });
 
 // Registrar rotas

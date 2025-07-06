@@ -69,6 +69,30 @@ export class AlarmController {
     }
   }
 
+  async getAlarmById(
+    request: FastifyRequest<{ Params: { id: string } }>,
+    reply: FastifyReply
+  ) {
+    try {
+      const userId = (request as any).userId;
+      const alarmId = parseInt(request.params.id);
+      const alarm = await this.service.getAlarmById(userId, alarmId);
+      
+      return reply.status(200).send({
+        alarm
+      });
+    } catch (error: any) {
+      if (error.message.includes('not found') || error.message.includes('access denied')) {
+        return reply.status(404).send({
+          error: error.message
+        });
+      }
+      return reply.status(500).send({
+        error: 'Erro interno do servidor'
+      });
+    }
+  }
+
   async updateAlarm(
     request: FastifyRequest<{ 
       Params: { id: string };
